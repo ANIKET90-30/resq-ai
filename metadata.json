@@ -1,0 +1,6 @@
+{
+  "name": "ResQ AI",
+  "description": "AI-powered disaster response and emergency intelligence platform",
+  "requestFramePermissions": ["camera", "geolocation", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
