@@ -22,7 +22,9 @@ import { AuthService } from './services/auth';
 import { DBService } from './services/db';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<string>('dashboard');
+  const [activeView, setActiveView] = useState<string>(() =>
+    AuthService.getCurrentUser() ? 'dashboard' : 'login'
+  );
   const [user, setUser] = useState<User | null>(() => AuthService.getCurrentUser());
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isSOSOpen, setIsSOSOpen] = useState<boolean>(false);

@@ -184,14 +184,7 @@ export class DBService {
   }
 
   static getCurrentUser(): User | null {
-    return this.getItem<User | null>(STORAGE_KEYS.CURRENT_USER, {
-      id: 'usr-demo-1',
-      email: 'alex.citizen@resq.ai',
-      fullName: 'Alex Morgan',
-      role: 'user',
-      phone: '+1 (555) 234-5678',
-      createdAt: new Date().toISOString(),
-    });
+    return this.getItem<User | null>(STORAGE_KEYS.CURRENT_USER, null);
   }
 
   static setCurrentUser(user: User | null): void {
