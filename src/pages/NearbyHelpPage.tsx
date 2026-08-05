@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MapPin,
   Search,
@@ -20,6 +20,27 @@ interface NearbyHelpPageProps {
 export const NearbyHelpPage: React.FC<NearbyHelpPageProps> = ({ shelters }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [userLat, setUserLat] = useState<number | undefined>(undefined);
+  const [userLng, setUserLng] = useState<number | undefined>(undefined);
+  const [locationStatus, setLocationStatus] = useState<'loading' | 'granted' | 'denied' | 'unsupported'>('loading');
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationStatus('unsupported');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLat(position.coords.latitude);
+        setUserLng(position.coords.longitude);
+        setLocationStatus('granted');
+      },
+      () => {
+        setLocationStatus('denied');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, []);
 
   const filtered = shelters.filter((s) => {
     const matchesCategory = selectedCategory === 'all' || s.type === selectedCategory;
@@ -44,8 +65,24 @@ export const NearbyHelpPage: React.FC<NearbyHelpPageProps> = ({ shelters }) => {
         </p>
       </div>
 
+      {locationStatus === 'denied' && (
+        <div className="px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+          Location access was blocked, so the map is showing a default area. Allow location access in your browser to see facilities near you.
+        </div>
+      )}
+      {locationStatus === 'unsupported' && (
+        <div className="px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+          Your browser doesn't support location services, so the map is showing a default area.
+        </div>
+      )}
+
       {/* Interactive Map Component */}
-      <InteractiveMap shelters={shelters} selectedCategory={selectedCategory} />
+      <InteractiveMap
+        shelters={shelters}
+        selectedCategory={selectedCategory}
+        userLat={userLat}
+        userLng={userLng}
+      />
 
       {/* Search Bar */}
       <div className="relative">
