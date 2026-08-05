@@ -64,10 +64,12 @@ app.post('/api/ai/assistant', async (req, res) => {
 
     const replyText = response.text || 'Keep safe and seek higher ground or sturdy cover. Contact local emergency authorities immediately.';
 
-    let triageLevel = 'moderate';
-    if (replyText.includes('[TRIAGE: CRITICAL]') || replyText.includes('CRITICAL')) triageLevel = 'critical';
-    else if (replyText.includes('[TRIAGE: HIGH]') || replyText.includes('HIGH')) triageLevel = 'high';
-    else if (replyText.includes('[TRIAGE: LOW]')) triageLevel = 'low';
+    // Strictly parse the actual [TRIAGE: X] tag instead of loosely
+    // scanning the whole reply for stray occurrences of words like
+    // "CRITICAL" or "HIGH", which caused false-positive triage badges
+    // whenever those words appeared in normal sentences.
+    const triageMatch = replyText.match(/\[TRIAGE:\s*(CRITICAL|HIGH|MODERATE|LOW)\]/i);
+    const triageLevel = triageMatch ? triageMatch[1].toLowerCase() : 'moderate';
 
     const cleanReply = replyText.replace(/\[TRIAGE: \w+\]/g, '').trim();
 
