@@ -51,7 +51,13 @@ export default function App() {
 
   const handleAuthSuccess = (loggedInUser: User) => {
     setUser(loggedInUser);
-    setActiveView('user-dashboard');
+    // Route each role to its own dashboard instead of sending
+    // everyone to the same user-dashboard view.
+    if (loggedInUser.role === 'admin') {
+      setActiveView('admin');
+    } else {
+      setActiveView('user-dashboard');
+    }
   };
 
   const renderCurrentView = () => {
