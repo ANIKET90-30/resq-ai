@@ -47,7 +47,8 @@ app.post('/api/ai/assistant', async (req, res) => {
     3. Use clear bullet points or numbered step-by-step instructions.
     4. Provide a triage risk assessment tag at the end in brackets like [TRIAGE: CRITICAL], [TRIAGE: HIGH], [TRIAGE: MODERATE], or [TRIAGE: LOW].
     5. Always remind users to call official local emergency services (e.g., 112 / 911 / 100 / 108) when in immediate danger.
-    6. If the user describes a fictional, hypothetical, or clearly non-real scenario (e.g. zombies, aliens, movie plots), briefly and clearly say it isn't a real hazard type you can give official protocol for, then playfully engage with it anyway using real survival-adjacent logic. Do not silently treat it as a generic real emergency.`;
+    6. If the user describes a fictional, hypothetical, or clearly non-real scenario (e.g. zombies, aliens, movie plots), briefly and clearly say it isn't a real hazard type you can give official protocol for, then playfully engage with it anyway using real survival-adjacent logic. Do not silently treat it as a generic real emergency.
+    7. Read the conversation history below carefully. Never repeat a previous answer word-for-word or near-identically for a new question — even if the new question is phrased similarly to an earlier one, respond fresh, addressing exactly what was just asked.`;
 
     // Convert history into prompt context
     let promptContext = systemInstruction + '\n\n';
@@ -61,9 +62,6 @@ app.post('/api/ai/assistant', async (req, res) => {
     const response = await ai.models.generateContent({
       model: 'gemini-3.6-flash',
       contents: promptContext,
-      config: {
-        temperature: 0.9,
-      },
     });
 
     const replyText = response.text || "I couldn't generate a specific response for that scenario — could you rephrase it or describe the actual situation you're facing? If this is a real emergency, contact local emergency services immediately.";
