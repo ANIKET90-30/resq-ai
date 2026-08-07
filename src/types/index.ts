@@ -55,6 +55,9 @@ export interface ImageUpload {
   riskScore: number; // 0-100
   explanation: string;
   safetyRecommendations: string[];
+  isLikelyAIGenerated?: boolean;
+  authenticityConfidence?: number;
+  authenticityNotes?: string;
   analyzedAt: string;
 }
 
@@ -111,6 +114,7 @@ export interface ShelterFacility {
   address: string;
   phone: string;
   capacity?: string;
+  suppliesStatus?: 'stocked' | 'low' | 'critical';
   open247: boolean;
   distanceKm?: number;
 }

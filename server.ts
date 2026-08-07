@@ -106,7 +106,7 @@ app.post('/api/ai/analyze-image', async (req, res) => {
     };
 
     const textPart = {
-      text: 'Analyze this image for emergency hazards (e.g. flood waters, fire, structural collapse, downed power lines, road washouts). Identify the hazard, assess risk level, provide a risk score (0-100), explain the situation concisely, and list 3 immediate safety recommendations.',
+      text: 'Analyze this image for emergency hazards (e.g. flood waters, fire, structural collapse, downed power lines, road washouts). Identify the hazard, assess risk level, provide a risk score (0-100), explain the situation concisely, and list 3 immediate safety recommendations. Also carefully assess whether this image is a real photograph or an AI-generated/synthetic image. Look for tell-tale signs of AI generation: unnatural or inconsistent lighting and shadows, warped or physically impossible structures, melted or asymmetric details (especially hands, text, edges), unnaturally smooth or plastic-looking textures, repeating patterns, or an overall "uncanny" quality. This matters because acting on a fake disaster photo could put someone in real danger or spread misinformation, so be conservative — if you are not confident it is a real photo, say so.',
     };
 
     const response = await ai.models.generateContent({
@@ -126,8 +126,20 @@ app.post('/api/ai/analyze-image', async (req, res) => {
               items: { type: Type.STRING },
               description: '3 clear actionable safety steps',
             },
+            isLikelyAIGenerated: {
+              type: Type.BOOLEAN,
+              description: 'True if the image shows signs of being AI-generated/synthetic rather than a real photograph',
+            },
+            authenticityConfidence: {
+              type: Type.NUMBER,
+              description: 'Confidence 0-100 that the authenticity assessment (real vs AI-generated) is correct',
+            },
+            authenticityNotes: {
+              type: Type.STRING,
+              description: 'Brief explanation of what visual evidence led to the authenticity assessment',
+            },
           },
-          required: ['hazardType', 'riskLevel', 'riskScore', 'explanation', 'safetyRecommendations'],
+          required: ['hazardType', 'riskLevel', 'riskScore', 'explanation', 'safetyRecommendations', 'isLikelyAIGenerated', 'authenticityConfidence', 'authenticityNotes'],
         },
       },
     });
@@ -137,16 +149,19 @@ app.post('/api/ai/analyze-image', async (req, res) => {
     res.json(parsed);
   } catch (error: any) {
     console.error('Image analysis error:', error);
-    res.json({
-      hazardType: 'Disaster Hazard Detected',
-      riskLevel: 'high',
-      riskScore: 75,
-      explanation: 'Analysis detected environmental risk indicators in the uploaded scene.',
+    res.status(500).json({
+      hazardType: 'Analysis Unavailable',
+      riskLevel: 'moderate',
+      riskScore: 0,
+      explanation: "This specific image couldn't be analyzed right now due to a technical issue on our end — this is not a real assessment of what's in your photo. Please try again in a moment. If you're in an actual emergency, don't wait on this tool — contact local emergency services directly.",
       safetyRecommendations: [
-        'Maintain a safe distance of at least 100 meters from the hazard area.',
-        'Alert nearby citizens and notify emergency dispatchers.',
-        'Follow official local evacuation directives.',
+        'Retry the scan in a few moments.',
+        'If this is a real emergency, call local emergency services immediately rather than waiting on this tool.',
+        'Check your internet connection and try again.',
       ],
+      isLikelyAIGenerated: false,
+      authenticityConfidence: 0,
+      authenticityNotes: 'Authenticity could not be checked because analysis failed.',
     });
   }
 });

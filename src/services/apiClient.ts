@@ -28,6 +28,9 @@ export class ApiClient {
     riskScore: number;
     explanation: string;
     safetyRecommendations: string[];
+    isLikelyAIGenerated: boolean;
+    authenticityConfidence: number;
+    authenticityNotes: string;
   }> {
     try {
       const res = await fetch('/api/ai/analyze-image', {
@@ -41,15 +44,18 @@ export class ApiClient {
     } catch (err) {
       console.warn('Backend API fallback triggered for image analysis:', err);
       return {
-        hazardType: 'Flood / Water Accumulation Danger',
-        riskLevel: 'high',
-        riskScore: 78,
-        explanation: 'Rapidly rising water detected along road approach. Risk of vehicle submergence and hidden submerged hazards.',
+        hazardType: 'Analysis Unavailable',
+        riskLevel: 'moderate',
+        riskScore: 0,
+        explanation: "This image couldn't be reached by our analysis server — this is not a real assessment. Check your connection and try again. If this is a real emergency, contact local emergency services directly.",
         safetyRecommendations: [
-          'Do not attempt to drive or walk through flooded roadways.',
-          'Ascend to higher floor or elevation immediately.',
-          'Disconnect main electrical breakers if water enters living area.',
+          'Retry the scan once your connection is stable.',
+          'If this is a real emergency, call local emergency services immediately.',
+          'Do not treat this message as an actual hazard assessment.',
         ],
+        isLikelyAIGenerated: false,
+        authenticityConfidence: 0,
+        authenticityNotes: 'Authenticity could not be checked because the request failed.',
       };
     }
   }
