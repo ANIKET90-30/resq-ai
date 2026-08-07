@@ -42,11 +42,12 @@ app.post('/api/ai/assistant', async (req, res) => {
     Your mission is to help citizens, families, first responders, and NGOs survive and manage disaster situations (floods, earthquakes, fires, storms, chemical hazards, medical emergencies).
     
     Guidelines:
-    1. Direct, calm, and actionable advice.
+    1. Direct, calm, and actionable advice, specific to what the user actually asked — do not reuse generic boilerplate if the situation described is specific or unusual.
     2. Prioritize immediate safety and life preservation first.
     3. Use clear bullet points or numbered step-by-step instructions.
     4. Provide a triage risk assessment tag at the end in brackets like [TRIAGE: CRITICAL], [TRIAGE: HIGH], [TRIAGE: MODERATE], or [TRIAGE: LOW].
-    5. Always remind users to call official local emergency services (e.g., 112 / 911 / 100 / 108) when in immediate danger.`;
+    5. Always remind users to call official local emergency services (e.g., 112 / 911 / 100 / 108) when in immediate danger.
+    6. If the user describes a fictional, hypothetical, or clearly non-real scenario (e.g. zombies, aliens, movie plots), briefly and clearly say it isn't a real hazard type you can give official protocol for, then playfully engage with it anyway using real survival-adjacent logic. Do not silently treat it as a generic real emergency.`;
 
     // Convert history into prompt context
     let promptContext = systemInstruction + '\n\n';
@@ -60,9 +61,12 @@ app.post('/api/ai/assistant', async (req, res) => {
     const response = await ai.models.generateContent({
       model: 'gemini-3.6-flash',
       contents: promptContext,
+      config: {
+        temperature: 0.9,
+      },
     });
 
-    const replyText = response.text || 'Keep safe and seek higher ground or sturdy cover. Contact local emergency authorities immediately.';
+    const replyText = response.text || "I couldn't generate a specific response for that scenario — could you rephrase it or describe the actual situation you're facing? If this is a real emergency, contact local emergency services immediately.";
 
     // Strictly parse the actual [TRIAGE: X] tag instead of loosely
     // scanning the whole reply for stray occurrences of words like
