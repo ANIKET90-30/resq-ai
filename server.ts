@@ -162,6 +162,72 @@ app.post('/api/sos', (req, res) => {
   });
 });
 
+// Haversine distance helper (km)
+function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10;
+}
+
+// Real nearby hazard detection — pulls live global disaster events
+// from NASA EONET (wildfires, floods, storms, volcanoes, etc.) and
+// filters to whatever is actually within range of the user's real
+// coordinates, instead of using fake demo data.
+app.get('/api/hazards/nearby', async (req, res) => {
+  try {
+    const lat = parseFloat(req.query.lat as string);
+    const lng = parseFloat(req.query.lng as string);
+    const radiusKm = parseFloat((req.query.radiusKm as string) || '50');
+
+    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+      return res.status(400).json({ error: 'lat and lng query params are required' });
+    }
+
+    const eonetRes = await fetch('https://eonet.gsfc.nasa.gov/api/v3/events?status=open&days=30&limit=300');
+    if (!eonetRes.ok) throw new Error('EONET request failed');
+    const eonetData: any = await eonetRes.json();
+
+    const hazards = (eonetData.events || [])
+      .map((event: any) => {
+        const lastGeometry = event.geometries?.[event.geometries.length - 1];
+        if (!lastGeometry || lastGeometry.type !== 'Point') return null;
+        const [eLng, eLat] = lastGeometry.coordinates;
+        const dist = distanceKm(lat, lng, eLat, eLng);
+        return {
+          id: event.id,
+          title: event.title,
+          category: event.categories?.[0]?.title || 'Unknown',
+          latitude: eLat,
+          longitude: eLng,
+          distanceKm: dist,
+          date: lastGeometry.date,
+          sourceUrl: event.sources?.[0]?.url || null,
+        };
+      })
+      .filter((h: any) => h !== null)
+      .sort((a: any, b: any) => a.distanceKm - b.distanceKm);
+
+    const withinRadius = hazards.filter((h: any) => h.distanceKm <= radiusKm);
+
+    res.json({
+      withinRadius,
+      radiusKm,
+      // If nothing is within the radius, still surface the closest few
+      // known events so the user isn't left with an empty screen —
+      // clearly labeled as outside their radius.
+      nearestOutsideRadius: withinRadius.length === 0 ? hazards.slice(0, 5) : [],
+    });
+  } catch (error: any) {
+    console.error('Nearby hazard detection error:', error);
+    res.status(500).json({ error: 'Failed to fetch live hazard data', withinRadius: [], nearestOutsideRadius: [] });
+  }
+});
+
 // Start server function with Vite integration
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

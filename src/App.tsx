@@ -16,6 +16,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { AuthPages } from './pages/AuthPages';
 import { PublicPages } from './pages/PublicPages';
 import { UserDashboardPage } from './pages/UserDashboardPage';
+import { HazardRadarPage } from './pages/HazardRadarPage';
 
 import { User, DisasterAlert, ShelterFacility, EmergencyReport, NotificationItem } from './types';
 import { AuthService } from './services/auth';
@@ -87,6 +88,9 @@ export default function App() {
             onLogout={handleLogout}
           />
         );
+
+      case 'hazard-radar':
+        return <HazardRadarPage />;
 
       case 'assistant':
         return <AssistantPage />;

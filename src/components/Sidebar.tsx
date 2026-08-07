@@ -14,6 +14,7 @@ import {
   LifeBuoy,
   Info,
   User as UserIcon,
+  Satellite,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -26,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate, isAdmi
   const primaryNav = [
     { id: 'dashboard', label: 'Command Center', icon: LayoutDashboard, badge: null },
     { id: 'user-dashboard', label: 'User Dashboard', icon: UserIcon, badge: 'Profile' },
+    { id: 'hazard-radar', label: 'Hazard Radar', icon: Satellite, badge: 'Live' },
     { id: 'assistant', label: 'AI Assistant', icon: Bot, badge: 'Live' },
     { id: 'hazard', label: 'Image Hazard Scan', icon: Camera, badge: 'Vision' },
     { id: 'map', label: 'Map & Shelters', icon: MapPin, badge: null },

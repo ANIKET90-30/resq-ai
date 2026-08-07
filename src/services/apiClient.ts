@@ -66,4 +66,13 @@ export class ApiClient {
       return { success: true, alertId: 'sos-' + Date.now() };
     }
   }
+
+  static async getNearbyHazards(latitude: number, longitude: number, radiusKm: number = 50): Promise<{
+    withinRadius: { id: string; title: string; category: string; latitude: number; longitude: number; distanceKm: number; date: string; sourceUrl: string | null }[];
+    nearestOutsideRadius: { id: string; title: string; category: string; latitude: number; longitude: number; distanceKm: number; date: string; sourceUrl: string | null }[];
+  }> {
+    const res = await fetch(`/api/hazards/nearby?lat=${latitude}&lng=${longitude}&radiusKm=${radiusKm}`);
+    if (!res.ok) throw new Error('Failed to fetch nearby hazards');
+    return await res.json();
+  }
 }
