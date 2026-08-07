@@ -4,6 +4,7 @@ import {
   Upload,
   AlertTriangle,
   ShieldCheck,
+  ShieldAlert,
   Sparkles,
   FileText,
   CheckCircle2,
@@ -24,6 +25,9 @@ export const HazardPage: React.FC = () => {
     riskScore: number;
     explanation: string;
     safetyRecommendations: string[];
+    isLikelyAIGenerated: boolean;
+    authenticityConfidence: number;
+    authenticityNotes: string;
   } | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +66,9 @@ export const HazardPage: React.FC = () => {
           riskScore: result.riskScore,
           explanation: result.explanation,
           safetyRecommendations: result.safetyRecommendations,
+          isLikelyAIGenerated: result.isLikelyAIGenerated,
+          authenticityConfidence: result.authenticityConfidence,
+          authenticityNotes: result.authenticityNotes,
           analyzedAt: new Date().toISOString(),
         });
       }
@@ -149,6 +156,33 @@ export const HazardPage: React.FC = () => {
 
             {analysisResult ? (
               <div className="space-y-4 animate-fade-in">
+                {/* Authenticity Badge — flagged first since it affects whether to trust anything below */}
+                <div
+                  className={`p-3 rounded-xl border flex items-start gap-2.5 ${
+                    analysisResult.isLikelyAIGenerated
+                      ? 'bg-rose-500/10 border-rose-500/30'
+                      : 'bg-emerald-500/10 border-emerald-500/30'
+                  }`}
+                >
+                  {analysisResult.isLikelyAIGenerated ? (
+                    <ShieldAlert className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  )}
+                  <div className="space-y-0.5">
+                    <p
+                      className={`text-xs font-bold ${
+                        analysisResult.isLikelyAIGenerated ? 'text-rose-400' : 'text-emerald-400'
+                      }`}
+                    >
+                      {analysisResult.isLikelyAIGenerated
+                        ? `⚠ Likely AI-Generated Image (${analysisResult.authenticityConfidence}% confidence)`
+                        : `Appears to be a Real Photograph (${analysisResult.authenticityConfidence}% confidence)`}
+                    </p>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">{analysisResult.authenticityNotes}</p>
+                  </div>
+                </div>
+
                 {/* Header Title & Severity Badge */}
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-bold text-white">{analysisResult.hazardType}</h3>
