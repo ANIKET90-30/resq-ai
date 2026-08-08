@@ -62,7 +62,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
     <div className="space-y-6 max-w-5xl mx-auto animate-fade-in text-slate-100 pb-12">
       {/* Header */}
       <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold uppercase tracking-wider">
           <Radio className="w-3.5 h-3.5" />
           <span>Responder Command & Control</span>
         </div>
@@ -95,7 +95,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
 
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
           <span className="text-xs text-slate-400">Audit Events</span>
-          <div className="text-2xl font-black font-mono text-cyan-400">{auditLogs.length}</div>
+          <div className="text-2xl font-black font-mono text-rose-400">{auditLogs.length}</div>
           <p className="text-[10px] text-slate-500">Security actions logged</p>
         </div>
       </div>
@@ -104,7 +104,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Broadcast Alert Creator Form */}
         <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-bold text-rose-400 uppercase tracking-wider">
             <Radio className="w-4 h-4" />
             <span>Broadcast Mass Advisory</span>
           </div>
@@ -125,7 +125,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="e.g. Flash Flood Evacuation Order Sector 5"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
+                className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
               />
             </div>
 
@@ -167,7 +167,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
                 value={newLocation}
                 onChange={(e) => setNewLocation(e.target.value)}
                 placeholder="e.g. Sutlej River Corridor & Coastal Highway"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
+                className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
               />
             </div>
 
@@ -178,7 +178,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
                 value={newDesc}
                 onChange={(e) => setNewDesc(e.target.value)}
                 placeholder="Detailed disaster summary..."
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
+                className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
               />
             </div>
 
@@ -189,13 +189,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
                 value={newAction}
                 onChange={(e) => setNewAction(e.target.value)}
                 placeholder="e.g. Evacuate immediately to High School Shelter"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
+                className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 transition-all"
             >
               <Send className="w-4 h-4" />
               <span>Broadcast Emergency Signal Now</span>
@@ -224,7 +224,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
                 </div>
 
                 <p className="text-xs text-slate-400 leading-relaxed">{rep.description}</p>
-                <p className="text-[10px] text-cyan-400 font-mono">📍 Location: {rep.locationName}</p>
+                <p className="text-[10px] text-rose-400 font-mono">📍 Location: {rep.locationName}</p>
               </div>
             ))}
           </div>
@@ -233,7 +233,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
 
       {/* Security Audit Log Section */}
       <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 uppercase tracking-wider">
+        <div className="flex items-center gap-2 text-xs font-bold text-rose-400 uppercase tracking-wider">
           <Lock className="w-4 h-4" />
           <span>Security Audit Trail Log</span>
         </div>
@@ -242,7 +242,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports, alerts:
           {auditLogs.map((log) => (
             <div key={log.id} className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-slate-300">
               <div className="flex items-center gap-2">
-                <span className="text-cyan-400 font-bold">[{log.action}]</span>
+                <span className="text-rose-400 font-bold">[{log.action}]</span>
                 <span>{log.details}</span>
               </div>
               <span className="text-slate-500 text-[10px]">
