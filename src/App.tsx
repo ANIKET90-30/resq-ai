@@ -17,6 +17,7 @@ import { AuthPages } from './pages/AuthPages';
 import { PublicPages } from './pages/PublicPages';
 import { UserDashboardPage } from './pages/UserDashboardPage';
 import { HazardRadarPage } from './pages/HazardRadarPage';
+import { ReportsCenterPage } from './pages/ReportsCenterPage';
 
 import { User, DisasterAlert, ShelterFacility, EmergencyReport, NotificationItem } from './types';
 import { AuthService } from './services/auth';
@@ -91,6 +92,9 @@ export default function App() {
 
       case 'hazard-radar':
         return <HazardRadarPage />;
+
+      case 'reports-center':
+        return <ReportsCenterPage user={user} reports={reports} />;
 
       case 'assistant':
         return <AssistantPage />;

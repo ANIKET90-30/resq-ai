@@ -15,6 +15,7 @@ import {
   Info,
   User as UserIcon,
   Satellite,
+  FileWarning,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -28,6 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate, isAdmi
     { id: 'dashboard', label: 'Command Center', icon: LayoutDashboard, badge: null },
     { id: 'user-dashboard', label: 'User Dashboard', icon: UserIcon, badge: 'Profile' },
     { id: 'hazard-radar', label: 'Hazard Radar', icon: Satellite, badge: 'Live' },
+    { id: 'reports-center', label: 'Reports Center', icon: FileWarning, badge: null },
     { id: 'assistant', label: 'AI Assistant', icon: Bot, badge: 'Live' },
     { id: 'hazard', label: 'Image Hazard Scan', icon: Camera, badge: 'Vision' },
     { id: 'map', label: 'Map & Shelters', icon: MapPin, badge: null },

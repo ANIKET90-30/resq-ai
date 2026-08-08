@@ -25,6 +25,7 @@ const STORAGE_KEYS = {
   SETTINGS: 'resq_settings',
   AUDIT_LOGS: 'resq_audit_logs',
   SAVED_COORDS: 'resq_saved_coords',
+  SHELTERS: 'resq_shelters',
 };
 
 // Seed initial alerts
@@ -289,6 +290,8 @@ export class DBService {
         locationName: 'Sutlej Bridge North Approach',
         description: 'Rushing water eroded eastern embankment. Road impassable.',
         status: 'active',
+        attachmentUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800',
+        attachmentName: 'bridge_washout_evidence.jpg',
         createdAt: new Date(Date.now() - 90 * 60000).toISOString(),
       },
     ]);
@@ -301,6 +304,15 @@ export class DBService {
     this.addAuditLog(report.userId, 'CREATE_EMERGENCY_REPORT', `Reported ${report.title}`);
   }
 
+  static updateReportStatus(reportId: string, status: EmergencyReport['status'], actorUserId: string): void {
+    const reports = this.getEmergencyReports();
+    const idx = reports.findIndex((r) => r.id === reportId);
+    if (idx === -1) return;
+    reports[idx] = { ...reports[idx], status };
+    this.setItem(STORAGE_KEYS.REPORTS, reports);
+    this.addAuditLog(actorUserId, 'UPDATE_REPORT_STATUS', `Set report ${reportId} to ${status}`);
+  }
+
   // --- Disaster Alerts ---
   static getAlerts(): DisasterAlert[] {
     return INITIAL_ALERTS;
@@ -308,7 +320,16 @@ export class DBService {
 
   // --- Shelters ---
   static getShelters(): ShelterFacility[] {
-    return INITIAL_SHELTERS;
+    return this.getItem<ShelterFacility[]>(STORAGE_KEYS.SHELTERS, INITIAL_SHELTERS);
+  }
+
+  static updateShelter(shelter: ShelterFacility, actorUserId: string): void {
+    const shelters = this.getShelters();
+    const idx = shelters.findIndex((s) => s.id === shelter.id);
+    if (idx === -1) return;
+    shelters[idx] = shelter;
+    this.setItem(STORAGE_KEYS.SHELTERS, shelters);
+    this.addAuditLog(actorUserId, 'UPDATE_SHELTER', `Updated ${shelter.name} (capacity: ${shelter.capacity ?? 'n/a'})`);
   }
 
   // --- Notifications ---

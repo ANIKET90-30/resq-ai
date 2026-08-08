@@ -72,6 +72,8 @@ export interface EmergencyReport {
   locationName: string;
   description: string;
   status: 'active' | 'responding' | 'resolved';
+  attachmentUrl?: string;
+  attachmentName?: string;
   createdAt: string;
 }
 
