@@ -32,7 +32,10 @@ const TYPE_ICONS: Record<string, React.ElementType> = {
 };
 
 export const ReportsCenterPage: React.FC<ReportsCenterPageProps> = ({ user, reports: initialReports }) => {
-  const [reports, setReports] = useState<EmergencyReport[]>(initialReports);
+  // Always read the current saved reports fresh — not the possibly-stale
+  // `initialReports` prop, which only reflects what existed when the app
+  // first loaded and wouldn't include anything submitted since then.
+  const [reports, setReports] = useState<EmergencyReport[]>(() => DBService.getEmergencyReports());
   const [roleFilter, setRoleFilter] = useState<'mine' | 'all' | 'active' | 'resolved'>(
     user?.role === 'user' ? 'mine' : 'all'
   );
