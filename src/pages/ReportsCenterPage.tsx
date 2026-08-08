@@ -14,6 +14,7 @@ import {
   Car,
   AlertCircle,
   MapPin,
+  Download,
 } from 'lucide-react';
 import { EmergencyReport, User } from '../types';
 import { DBService } from '../services/db';
@@ -132,8 +133,38 @@ export const ReportsCenterPage: React.FC<ReportsCenterPageProps> = ({ user, repo
     return { byType, byStatus, topType, total: reports.length };
   }, [reports]);
 
-  const filterTabs: { id: typeof roleFilter; label: string }[] =
-    user?.role === 'user'
+  // Download a single report as a plain-text summary file
+  const handleDownloadReport = (r: EmergencyReport) => {
+    const lines = [
+      `RESQ AI — EMERGENCY REPORT`,
+      `====================================`,
+      `Report ID: ${r.id}`,
+      `Title: ${r.title}`,
+      `Type: ${r.type}`,
+      `Severity: ${r.severity}`,
+      `Status: ${r.status}`,
+      `Location: ${r.locationName} (${r.latitude.toFixed(4)}, ${r.longitude.toFixed(4)})`,
+      `Filed: ${new Date(r.createdAt).toLocaleString()}`,
+      ``,
+      `Description:`,
+      r.description || '(none provided)',
+      ``,
+      r.attachmentName ? `Attachment: ${r.attachmentName}` : `Attachment: none`,
+      r.attachmentUrl && r.attachmentUrl.startsWith('http') ? `Attachment link: ${r.attachmentUrl}` : '',
+    ].filter(Boolean);
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `resq-report-${r.id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const filterTabs: { id: typeof roleFilter; label: string }[] =    user?.role === 'user'
       ? [
           { id: 'mine', label: 'My Reports' },
           { id: 'all', label: 'All Reports' },
@@ -407,6 +438,12 @@ export const ReportsCenterPage: React.FC<ReportsCenterPageProps> = ({ user, repo
                         <Paperclip className="w-3 h-3" /> {r.attachmentName || 'Evidence attached'}
                       </span>
                     )}
+                    <button
+                      onClick={() => handleDownloadReport(r)}
+                      className="flex items-center gap-1 text-slate-400 hover:text-cyan-400 transition-colors ml-auto"
+                    >
+                      <Download className="w-3 h-3" /> Download
+                    </button>
                   </div>
                 </div>
               </div>
